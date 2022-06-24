@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
 import axios from "axios";
+import SearchInput from "./components/SearchInput.vue";
 
 const currentWeatherData = ref({});
 const historicWeatherData = ref({});
@@ -51,7 +52,12 @@ onMounted(() => {
 </script>
 
 <template>
-  <div>{{ historyLinks }}</div>
+  <!-- TODO: create component for current days weather data -->
+  <!-- TODO: create component for the next 7 days and previous days -->
+  <!-- TODO: create component for extra info -->
+  <!-- TODO: add map option to allow for plotting of location on map -->
+  <div>jello</div>
+  <SearchInput />
 </template>
 
 <style>

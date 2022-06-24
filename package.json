@@ -8,7 +8,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@algolia/autocomplete-js": "^1.7.0",
+    "@algolia/autocomplete-theme-classic": "^1.7.0",
     "axios": "^0.27.2",
+    "cities.json": "^1.1.9",
+    "places.js": "^1.19.0",
     "vue": "^3.2.25"
   },
   "devDependencies": {
