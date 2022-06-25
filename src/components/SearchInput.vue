@@ -11,14 +11,13 @@ const place = ref("");
 
 // emitters
 const emit = defineEmits({
-  search: {
-    lngLatFound: {
-      type: String,
-      default: "",
-    },
+  lngLatFound: {
+    type: String,
+    default: "",
   },
 });
 
+// search for LngLat using city name
 function searchPlace(place) {
   axios
     .get(
@@ -34,7 +33,7 @@ function searchPlace(place) {
       }
     });
 }
-
+// request for location using LngLat
 function searchWithLonLat(lat, lon) {
   axios
     .get(
@@ -46,6 +45,7 @@ function searchWithLonLat(lat, lon) {
     });
 }
 
+// Pre-fill the input field with the user current location
 function getLocation() {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
@@ -120,13 +120,32 @@ onMounted(() => {
 
 <template>
   <!-- <div id="autocomplete"> -->
-  <input
-    type="search"
-    id="places"
-    v-model="place"
-    autocomplete="on"
-    class="border border-gray-200 p-2 rounded-lg focus:shadow-lg"
-    @keydown.enter="searchPlace(place)"
-  />
+  <div class="w-full flex justify-between items-center">
+    <input
+      type="search"
+      id="places"
+      v-model="place"
+      autocomplete="on"
+      class="input w-full shadow-md mx-2"
+      @keydown.enter="searchPlace(place)"
+    />
+    <button class="btn btn-primary">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-6 w-6"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
+        />
+      </svg>
+    </button>
+  </div>
+
   <!-- </div> -->
 </template>
