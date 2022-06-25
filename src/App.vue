@@ -1,14 +1,17 @@
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, defineAsyncComponent } from "vue";
 import axios from "axios";
 import SearchInput from "./components/SearchInput.vue";
 import WeatherCard from "./components/WeatherCard.vue";
 import ShowMore from "./components/ShowMore.vue";
+import countries from "./services/countries";
+import WeekForecast from "./components/WeekForecast.vue";
 
 const currentWeatherData = ref({});
 const historicWeatherData = ref({});
 const more = ref(false);
-
+const searchCountry = ref({});
+const currentComponent = ref("WeekForecast");
 // request for current weather data
 function getCurrentWeatherData(lat, lon) {
   return axios
@@ -48,10 +51,17 @@ function showMore(event) {
   more.value = event;
 }
 
-onMounted(() => {
-  getCurrentWeatherData(5.614818, -0.205874);
-  makeHistoricalWeatherDataRequest(5.614818, -0.205874);
-  // console.log(createHistoricalWeatherDataRequest(5.614818, -0.205874));
+function useLngLat(event) {
+  const { lon, lat, country, city } = event;
+  getCurrentWeatherData(lat, lon);
+  const result = countries.find((item) => item.code === country).name;
+  searchCountry.value = { country: result, city };
+}
+
+const historyVsForcecast = computed(() => {
+  return currentComponent.value === "WeekForecast"
+    ? defineAsyncComponent(() => import("./components/WeekForecast.vue"))
+    : defineAsyncComponent(() => import("./components/HistoryCard.vue"));
 });
 
 const highAndLowCurrent = computed(() => {
@@ -79,13 +89,25 @@ const highAndLowCurrent = computed(() => {
   <!-- TODO: create component for extra info -->
   <!-- TODO: add map option to allow for plotting of location on map -->
   <div class="p-2">
-    <SearchInput />
-    <WeatherCard
-      :current="currentWeatherData.current"
-      :highAndLowCurrent="highAndLowCurrent"
-      @showMore="showMore"
-    />
-    <ShowMore :current="currentWeatherData.current" v-if="more" />
+    <SearchInput @lngLatFound="useLngLat" />
+    <div v-if="Object.keys(currentWeatherData).length > 0" class="w-full">
+      <WeatherCard
+        :current="currentWeatherData.current"
+        :highAndLowCurrent="highAndLowCurrent"
+        @showMore="showMore"
+        :searchCountry="searchCountry"
+      />
+      <Transition name="slide" mode="out-in">
+        <ShowMore :current="currentWeatherData.current" v-if="more" />
+      </Transition>
+      <div class="w-full">
+        <button class="btn btn-secondary">View Last 5 days</button>
+        <component
+          :is="historyVsForcecast"
+          :daily="currentWeatherData.daily"
+        ></component>
+      </div>
+    </div>
   </div>
 </template>
 

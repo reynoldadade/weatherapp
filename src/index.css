@@ -6,3 +6,21 @@
 body {
   font-family: "Inter", sans-serif;
 }
+
+.slide-enter-active {
+  animation: Slide 0.3s ease;
+}
+.slide-leave-active {
+  animation: Slide 0.3s ease reverse;
+}
+
+@keyframes Slide {
+  from {
+    transform: translateX(100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}

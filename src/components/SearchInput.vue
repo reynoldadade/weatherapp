@@ -10,12 +10,7 @@ const error = ref(false);
 const place = ref("");
 
 // emitters
-const emit = defineEmits({
-  lngLatFound: {
-    type: String,
-    default: "",
-  },
-});
+const emit = defineEmits(["lngLatFound"]);
 
 // search for LngLat using city name
 function searchPlace(place) {
@@ -27,7 +22,7 @@ function searchPlace(place) {
       if (response.data.length > 0) {
         const [first] = response.data;
         location.value = first;
-        emit("lngLatFound", first);
+        emit("lngLatFound", { ...first, city: place });
       } else {
         error.value = true;
       }
@@ -129,7 +124,7 @@ onMounted(() => {
       class="input w-full shadow-md mx-2"
       @keydown.enter="searchPlace(place)"
     />
-    <button class="btn btn-primary">
+    <button class="btn">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         class="h-6 w-6"

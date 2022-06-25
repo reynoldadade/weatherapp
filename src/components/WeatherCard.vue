@@ -12,6 +12,10 @@ const props = defineProps({
     type: Object,
     default: { min: 0, max: 0 },
   },
+  searchCountry: {
+    type: Object,
+    default: { country: "", city: "" },
+  },
 });
 
 // data
@@ -43,22 +47,31 @@ const weatherIcon = computed(() => {
 </script>
 
 <template>
-  <div class="card w-full bg-teal-300 shadow-lg m-1">
+  <div class="card w-full bg-primary shadow-lg m-1">
     <div class="card-body items-center text-center">
+      <h1 class="card-title">
+        <!-- Location (ie. Brussels, Belgium) -->
+        {{ searchCountry.city }}, {{ searchCountry.country }}
+      </h1>
+
       <figure>
         <img :src="weatherIcon" alt="" />
       </figure>
-      <div class="text-5xl text-gray-700">{{ current.temp }} º</div>
+      <!-- Current temperature -->
+      <div class="text-5xl text-gray-700">{{ current.temp }}º</div>
+      <!-- Current weather description (ie. raining) -->
       <h2 class="text-sm capitalize">{{ weather?.description }}</h2>
 
       <div class="">
+        <!-- Today's low temperature -->
         <span class="text-xs mx-1">L:</span>
         <span class="text-sm">{{ highAndLowCurrent.min }}º</span>
+        <!-- today's high temperature -->
         <span class="text-xs mx-1">H:</span>
         <span class="text-sm">{{ highAndLowCurrent.max }}º</span>
       </div>
       <div class="card-actions">
-        <button class="btn btn-primary text-xs" @click="showMore">
+        <button class="btn text-xs" @click="showMore">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="h-6 w-6"
