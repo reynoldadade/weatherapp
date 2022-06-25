@@ -8,6 +8,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "axios": "^0.27.2",
+    "daisyui": "^2.17.0",
+    "mapbox-gl": "^2.9.1",
+    "moment": "^2.29.3",
     "vue": "^3.2.25"
   },
   "devDependencies": {

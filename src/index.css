@@ -6,3 +6,25 @@
 body {
   font-family: "Inter", sans-serif;
 }
+html {
+  @apply bg-gradient-to-r from-cyan-500 to-blue-50;
+  color: #191d24;
+}
+
+.slide-enter-active {
+  animation: Slide 0.3s ease;
+}
+.slide-leave-active {
+  animation: Slide 0.3s ease reverse;
+}
+
+@keyframes Slide {
+  from {
+    transform: translateX(100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
