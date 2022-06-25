@@ -5,6 +5,7 @@ import SearchInput from "./components/SearchInput.vue";
 import WeatherCard from "./components/WeatherCard.vue";
 import ShowMore from "./components/ShowMore.vue";
 import countries from "./services/countries";
+import MapContainer from "./components/MapContainer.vue";
 
 const currentWeatherData = ref({});
 const historicWeatherData = ref({});
@@ -94,7 +95,7 @@ const highAndLowCurrent = computed(() => {
   <!-- TODO: create component for the next 7 days and previous days -->
   <!-- TODO: create component for extra info -->
   <!-- TODO: add map option to allow for plotting of location on map -->
-  <div class="p-2">
+  <div class="p-2 md:p-40">
     <SearchInput @lngLatFound="useLngLat" />
     <div v-if="Object.keys(currentWeatherData).length > 0" class="w-full">
       <WeatherCard
@@ -106,6 +107,7 @@ const highAndLowCurrent = computed(() => {
       <Transition name="slide" mode="out-in">
         <ShowMore :current="currentWeatherData.current" v-if="more" />
       </Transition>
+      <MapContainer :searchCountry="searchCountry" />
       <div class="w-full">
         <button class="btn" @click="changeComponent">
           {{

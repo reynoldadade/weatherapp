@@ -1,9 +1,6 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import axios from "axios";
-// import "@algolia/autocomplete-theme-classic";
-// import { autocomplete } from "@algolia/autocomplete-js";
-// import cities from "cities.json";
 
 const location = ref({});
 const error = ref(false);

@@ -44,5 +44,18 @@ const weatherIcon = computed(() => {
       <span class="text-xs mx-1">H:</span>
       <span class="text-sm">{{ props.current.temp.max }}º</span>
     </td>
+    <td class="hidden md:table-cell">
+      <!-- Today's low temperature -->
+      <span class="text-xs mx-1 opacity-80">sunrise:</span>
+
+      <span class="text-sm">{{
+        moment(props.current.sunrise * 1000).format("LT")
+      }}</span>
+      <!-- today's high temperature -->
+      <span class="text-xs mx-1">sunset:</span>
+      <span class="text-sm">{{
+        moment(props.current.sunset * 1000).format("LT")
+      }}</span>
+    </td>
   </tr>
 </template>
