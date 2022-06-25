@@ -1,4 +1,4 @@
-<script></script>
+<script setup></script>
 
 <template>
   <div class="fixed inset-0 w-full h-full bg-black opacity-50 z-50">

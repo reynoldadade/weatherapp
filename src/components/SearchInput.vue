@@ -1,23 +1,16 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import axios from "axios";
-import Loader from "./Loader.vue";
 
 const location = ref({});
 const error = ref(false);
 const place = ref("");
-const message = ref("Loading...");
-const showLoader = ref(false);
 
 // emitters
-const emit = defineEmits(["lngLatFound"]);
+const emit = defineEmits(["lngLatFound", "toggleLoader"]);
 
-function toggleLoader(event) {
-  showLoader.value = event;
-}
 // search for LngLat using city name
 function searchPlace(place) {
-  toggleLoader(true);
   axios
     .get(
       `http://api.openweathermap.org/geo/1.0/direct?q=${place}&limit=1&appid=ae11ff30d19df8f21cb53a7b12688d1d`
@@ -27,16 +20,15 @@ function searchPlace(place) {
         const [first] = response.data;
         location.value = first;
         emit("lngLatFound", { ...first, city: place });
-        toggleLoader(false);
       } else {
         error.value = true;
-        toggleLoader(false);
+        emit("toggleLoader", false);
       }
     });
 }
 // request for location using LngLat
 function searchWithLonLat(lat, lon) {
-  toggleLoader(true);
+  emit("toggleLoader", true);
   axios
     .get(
       `http://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&appid=ae11ff30d19df8f21cb53a7b12688d1d&limit=1`
@@ -45,7 +37,7 @@ function searchWithLonLat(lat, lon) {
       const [first] = response.data;
       place.value = first.name;
       location.value = first;
-      toggleLoader(false);
+      emit("toggleLoader", false);
     });
 }
 
@@ -82,50 +74,11 @@ function getLocation() {
 onMounted(() => {
   getLocation();
 });
-
-// function initAutocomplete() {
-//   autocomplete({
-//     container: "#autocomplete",
-//     getSources() {
-//       return [
-//         {
-//           sourceId: "cities",
-//           getItems({ query }) {
-//             const items = cities.map((city) => city.name);
-
-//             return items.filter((name) =>
-//               name.toLowerCase().includes(query.toLowerCase())
-//             );
-//           },
-
-//           templates: {
-//             item({ item }) {
-//               return item.name;
-//             },
-//           },
-//         },
-//       ];
-//     },
-//   });
-
-//   // autocomplete.on(
-//   //   "autocomplete:selected",
-//   //   function (event, suggestion, dataset) {
-//   //     place.value = suggestion.name;
-//   //     searchPlace(suggestion.name);
-//   //   }
-//   // );
-// }
-
-// onMounted(() => {
-//   initAutocomplete();
-// });
 </script>
 
 <template>
   <!-- <div id="autocomplete"> -->
   <div class="w-full flex justify-between items-center relative">
-    <Loader v-if="showLoader" />
     <input
       type="search"
       id="places"
@@ -155,3 +108,5 @@ onMounted(() => {
 
   <!-- </div> -->
 </template>
+
+<style scoped></style>

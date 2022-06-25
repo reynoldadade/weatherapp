@@ -6,20 +6,32 @@ import WeatherCard from "./components/WeatherCard.vue";
 import ShowMore from "./components/ShowMore.vue";
 import countries from "./services/countries";
 import MapContainer from "./components/MapContainer.vue";
+import Loader from "./components/Loader.vue";
 
 const currentWeatherData = ref({});
 const historicWeatherData = ref({});
 const more = ref(false);
 const searchCountry = ref({});
 const currentComponent = ref("WeekForecast");
+
+//for loader
+const message = ref("Loading...");
+const showLoader = ref(false);
+
+//toggle loader
+function toggleLoader(event) {
+  showLoader.value = event;
+}
 // request for current weather data
 function getCurrentWeatherData(lat, lon) {
+  toggleLoader(true);
   return axios
     .get(
       `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=ae11ff30d19df8f21cb53a7b12688d1d&units=metric`
     )
     .then((response) => {
       currentWeatherData.value = response.data;
+      toggleLoader(false);
     });
 }
 
@@ -71,6 +83,16 @@ const historyVsForcecast = computed(() => {
     : defineAsyncComponent(() => import("./components/HistoryComponent.vue"));
 });
 
+const changePropsToComponents = computed(() => {
+  return currentComponent.value === "WeekForecast"
+    ? {
+        daily: currentWeatherData.value.daily,
+      }
+    : {
+        history: historicWeatherData.value,
+      };
+});
+
 const highAndLowCurrent = computed(() => {
   if (Object.keys(currentWeatherData.value).length > 0) {
     const temps = currentWeatherData.value.hourly.map((data) => data.temp);
@@ -95,8 +117,10 @@ const highAndLowCurrent = computed(() => {
   <!-- TODO: create component for the next 7 days and previous days -->
   <!-- TODO: create component for extra info -->
   <!-- TODO: add map option to allow for plotting of location on map -->
-  <div class="p-2 md:p-40">
-    <SearchInput @lngLatFound="useLngLat" />
+  <div class="p-2 md:p-40 relative">
+    <Loader v-if="showLoader" />
+    <SearchInput @lngLatFound="useLngLat" @toggleLoader="toggleLoader" />
+
     <div v-if="Object.keys(currentWeatherData).length > 0" class="w-full">
       <WeatherCard
         :current="currentWeatherData.current"
@@ -120,8 +144,7 @@ const highAndLowCurrent = computed(() => {
           <Transition name="slide" mode="out-in">
             <component
               :is="historyVsForcecast"
-              :daily="currentWeatherData.daily"
-              :history="historicWeatherData"
+              v-bind="changePropsToComponents"
               @callHistoryApi="
                 makeHistoricalWeatherDataRequest(
                   searchCountry.lat,
