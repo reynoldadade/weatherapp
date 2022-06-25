@@ -49,7 +49,7 @@ const weatherIcon = computed(() => {
 <template>
   <div class="card w-full drop-shadow-xl my-4 p-2">
     <div class="card-body items-center text-center">
-      <h1 class="card-title">
+      <h1 class="card-title capitalize">
         <!-- Location (ie. Brussels, Belgium) -->
         {{ searchCountry.city }}, {{ searchCountry.country }}
       </h1>
