@@ -47,7 +47,7 @@ const weatherIcon = computed(() => {
 </script>
 
 <template>
-  <div class="card w-full bg-primary shadow-lg m-1">
+  <div class="card w-full drop-shadow-xl my-4 p-2">
     <div class="card-body items-center text-center">
       <h1 class="card-title">
         <!-- Location (ie. Brussels, Belgium) -->

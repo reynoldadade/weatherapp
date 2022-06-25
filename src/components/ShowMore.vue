@@ -15,7 +15,7 @@ Humidity
 Pressure
 Sunrise/Sunset Time -->
 <template>
-  <div class="card shadow-lg my-4 mx-2 w-full bg-gray-100">
+  <div class="card shadow-lg my-4 p-2 w-full bg-gray-100 opacity-75">
     <div class="grid grid-cols-2">
       <div class="p-2 text-center">
         <h1 class="text-sm text-gray-500">Wind Speed</h1>

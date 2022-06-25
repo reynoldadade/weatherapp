@@ -1,24 +1,19 @@
 <script setup>
-import ForecastCard from "./ForecastCard.vue";
-import { computed } from "vue";
+import { onMounted } from "vue";
+import HistoryCard from "./HistoryCard.vue";
+const emits = defineEmits(["callHistoryApi"]);
 const props = defineProps({
-  daily: {
+  history: {
     type: Array,
     default: [],
   },
 });
-
-const sevenDays = computed(() => {
-  if (props.daily.length > 0) {
-    return props.daily.slice(1, 8);
-  } else {
-    return [];
-  }
+onMounted(() => {
+  emits("callHistoryApi");
 });
 </script>
-
 <template>
-  <div class="w-full card px-2 my-4 shadow-xl">
+  <div class="w-full card mx-2 my-4 shadow-lg">
     <h1 class="flex items-center w-full">
       <span class="mx-1"
         ><svg
@@ -36,16 +31,15 @@ const sevenDays = computed(() => {
           />
         </svg>
       </span>
-      <span> 7-day Forecast </span>
+      <span> 5-day History </span>
     </h1>
     <table class="table-auto">
       <tbody>
-        <forecast-card
-          :day="day"
-          v-for="day in sevenDays"
-          :key="day.dt"
-          :current="day"
-        ></forecast-card>
+        <HistoryCard
+          :current="day.current"
+          v-for="(day, index) in history"
+          :key="index"
+        />
       </tbody>
     </table>
   </div>
