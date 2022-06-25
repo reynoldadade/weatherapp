@@ -134,9 +134,11 @@ const highAndLowCurrent = computed(() => {
       </div>
     </div>
     <div class="flex justify-center w-full my-40" v-else>
-      <div class="card w-1/2 shadow-xl bg-gray-100 opacity-70 text-sm p-4">
+      <div
+        class="card w-3/4 md:w-1/2 shadow-xl bg-gray-100 opacity-70 text-sm p-4"
+      >
         Hi, looks like you haven't made a search yet. Enter a city into the
-        search box
+        search box and let me get you the weather conditions
       </div>
     </div>
   </div>
