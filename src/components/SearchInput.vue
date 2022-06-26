@@ -13,7 +13,9 @@ const emit = defineEmits(["lngLatFound", "toggleLoader", "noLocationFound"]);
 function searchPlace(place) {
   axios
     .get(
-      `http://api.openweathermap.org/geo/1.0/direct?q=${place}&limit=1&appid=${
+      `${
+        import.meta.env.VITE_BASE_URL
+      }/geo/1.0/direct?q=${place}&limit=1&appid=${
         import.meta.env.VITE_WEATHER_APP_ID
       }`
     )
@@ -33,7 +35,9 @@ function searchWithLonLat(lat, lon) {
   emit("toggleLoader", true);
   axios
     .get(
-      `http://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&appid=${
+      `${
+        import.meta.env.VITE_BASE_URL
+      }/geo/1.0/reverse?lat=${lat}&lon=${lon}&appid=${
         import.meta.env.VITE_WEATHER_APP_ID
       }&limit=1`
     )

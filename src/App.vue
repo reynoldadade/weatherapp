@@ -36,7 +36,9 @@ function getCurrentWeatherData(lat, lon) {
   toggleLoader(true);
   return axios
     .get(
-      `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=${
+      `${
+        import.meta.env.VITE_BASE_URL
+      }/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=${
         import.meta.env.VITE_WEATHER_APP_ID
       }&units=metric`
     )
@@ -54,7 +56,9 @@ function createHistoricalWeatherDataRequest(lat, lon) {
     const today = Date.now();
     const days = Math.floor((today - 24 * 60 * 60 * 1000 * i) / 1000);
     const request = axios.get(
-      `https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=${lat}&lon=${lon}&appid=${
+      `${
+        import.meta.env.VITE_BASE_URL
+      }/data/2.5/onecall/timemachine?lat=${lat}&lon=${lon}&appid=${
         import.meta.env.VITE_WEATHER_APP_ID
       }&units=metric&exclude=hourly&dt=${days}&only_current=true`
     );
