@@ -13,7 +13,9 @@ const emit = defineEmits(["lngLatFound", "toggleLoader", "noLocationFound"]);
 function searchPlace(place) {
   axios
     .get(
-      `http://api.openweathermap.org/geo/1.0/direct?q=${place}&limit=1&appid=ae11ff30d19df8f21cb53a7b12688d1d`
+      `http://api.openweathermap.org/geo/1.0/direct?q=${place}&limit=1&appid=${
+        import.meta.env.VITE_WEATHER_APP_ID
+      }`
     )
     .then((response) => {
       if (response.data.length > 0) {
@@ -31,7 +33,9 @@ function searchWithLonLat(lat, lon) {
   emit("toggleLoader", true);
   axios
     .get(
-      `http://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&appid=ae11ff30d19df8f21cb53a7b12688d1d&limit=1`
+      `http://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&appid=${
+        import.meta.env.VITE_WEATHER_APP_ID
+      }&limit=1`
     )
     .then((response) => {
       const [first] = response.data;
@@ -83,7 +87,7 @@ onMounted(() => {
       type="search"
       id="places"
       v-model="place"
-      autocomplete="on"
+      autocomplete="address-level2"
       class="input w-full shadow-md mx-2"
       placeholder="Enter City"
       @keydown.enter="searchPlace(place)"
