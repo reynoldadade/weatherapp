@@ -3,11 +3,11 @@ import { onMounted, ref } from "vue";
 import axios from "axios";
 
 const location = ref({});
-const error = ref(false);
+
 const place = ref("");
 
 // emitters
-const emit = defineEmits(["lngLatFound", "toggleLoader"]);
+const emit = defineEmits(["lngLatFound", "toggleLoader", "noLocationFound"]);
 
 // search for LngLat using city name
 function searchPlace(place) {
@@ -19,9 +19,9 @@ function searchPlace(place) {
       if (response.data.length > 0) {
         const [first] = response.data;
         location.value = first;
-        emit("lngLatFound", { ...first, city: place });
+        emit("lngLatFound", { ...first, city: first.name });
       } else {
-        error.value = true;
+        emit("noLocationFound");
         emit("toggleLoader", false);
       }
     });

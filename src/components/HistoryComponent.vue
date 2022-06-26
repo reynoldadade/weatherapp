@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted } from "vue";
+import { computed, onMounted } from "vue";
 import HistoryCard from "./HistoryCard.vue";
 const emits = defineEmits(["callHistoryApi"]);
 const props = defineProps({
@@ -13,7 +13,7 @@ onMounted(() => {
 });
 </script>
 <template>
-  <div class="w-full card mx-2 my-4 shadow-lg">
+  <div class="w-full">
     <h1 class="flex items-center w-full">
       <span class="mx-1"
         ><svg
@@ -33,7 +33,15 @@ onMounted(() => {
       </span>
       <span> 5-day History </span>
     </h1>
-    <table class="table-auto">
+    <table class="table-auto w-full">
+      <thead class="sticky top-0 bg-gradient-to-r from-cyan-500 to-blue-50">
+        <tr class="text-xs">
+          <th class="px-4 py-2">Date</th>
+          <th class="px-4 py-2">Weather</th>
+          <th class="px-4 py-2">Temperature</th>
+          <!-- <th class="px-4 py-2 hidden md:table-cell">Sunrise/Sunset</th> -->
+        </tr>
+      </thead>
       <tbody>
         <HistoryCard
           :current="day.current"

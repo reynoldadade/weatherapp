@@ -9,7 +9,7 @@ import MapContainer from "./components/MapContainer.vue";
 import Loader from "./components/Loader.vue";
 
 const currentWeatherData = ref({});
-const historicWeatherData = ref({});
+const historicWeatherData = ref([]);
 const more = ref(false);
 const searchCountry = ref({});
 const currentComponent = ref("WeekForecast");
@@ -17,10 +17,19 @@ const currentComponent = ref("WeekForecast");
 //for loader
 const message = ref("Loading...");
 const showLoader = ref(false);
+// in case no location is found
+const notFound = ref(false);
 
 //toggle loader
 function toggleLoader(event) {
   showLoader.value = event;
+}
+
+// when the location entered is not found
+function noLocationFound() {
+  currentWeatherData.value = [];
+  historicWeatherData.value = [];
+  notFound.value = true;
 }
 // request for current weather data
 function getCurrentWeatherData(lat, lon) {
@@ -35,6 +44,7 @@ function getCurrentWeatherData(lat, lon) {
     });
 }
 
+// create historical data requests
 function createHistoricalWeatherDataRequest(lat, lon) {
   const timeStampRequests = [];
   // last 5 days as timestamps
@@ -50,6 +60,7 @@ function createHistoricalWeatherDataRequest(lat, lon) {
   return timeStampRequests;
 }
 
+// request hostorical weather data together
 function makeHistoricalWeatherDataRequest(lat, lon) {
   Promise.all(createHistoricalWeatherDataRequest(lat, lon)).then(
     (responses) => {
@@ -89,7 +100,7 @@ const changePropsToComponents = computed(() => {
         daily: currentWeatherData.value.daily,
       }
     : {
-        history: historicWeatherData.value,
+        history: historicWeatherData.value.reverse(),
       };
 });
 
@@ -119,7 +130,11 @@ const highAndLowCurrent = computed(() => {
   <!-- TODO: add map option to allow for plotting of location on map -->
   <div class="p-2 md:p-40 relative">
     <Loader v-if="showLoader" />
-    <SearchInput @lngLatFound="useLngLat" @toggleLoader="toggleLoader" />
+    <SearchInput
+      @lngLatFound="useLngLat"
+      @toggleLoader="toggleLoader"
+      @noLocationFound="noLocationFound"
+    />
 
     <div v-if="Object.keys(currentWeatherData).length > 0" class="w-full">
       <WeatherCard
@@ -140,28 +155,35 @@ const highAndLowCurrent = computed(() => {
               : "View For the next 7 days"
           }}
         </button>
-        <keep-alive>
-          <Transition name="slide" mode="out-in">
-            <component
-              :is="historyVsForcecast"
-              v-bind="changePropsToComponents"
-              @callHistoryApi="
-                makeHistoricalWeatherDataRequest(
-                  searchCountry.lat,
-                  searchCountry.lon
-                )
-              "
-            ></component>
-          </Transition>
-        </keep-alive>
+        <div
+          class="w-full h-72 overflow-y-auto card my-4 px-2 shadow-xl relative"
+        >
+          <keep-alive>
+            <Transition name="slide" mode="out-in">
+              <component
+                :is="historyVsForcecast"
+                v-bind="changePropsToComponents"
+                @callHistoryApi="
+                  makeHistoricalWeatherDataRequest(
+                    searchCountry.lat,
+                    searchCountry.lon
+                  )
+                "
+              ></component>
+            </Transition>
+          </keep-alive>
+        </div>
       </div>
     </div>
     <div class="flex justify-center w-full my-40" v-else>
       <div
         class="card w-3/4 md:w-1/2 shadow-xl bg-gray-100 opacity-70 text-sm p-4"
       >
-        Hi, looks like you haven't made a search yet. Enter a city into the
-        search box and let me get you the weather conditions
+        {{
+          notFound
+            ? "Seems you have entered a city that does not exist, lets try this again"
+            : "Hi, looks like you haven't made a search yet. Enter a city into the search box and let me get you the weather conditions"
+        }}
       </div>
     </div>
   </div>
