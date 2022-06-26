@@ -18,7 +18,7 @@ const sevenDays = computed(() => {
 </script>
 
 <template>
-  <div class="w-full card px-2 my-4 shadow-xl">
+  <div class="w-full">
     <h1 class="flex items-center w-full">
       <span class="mx-1"
         ><svg
@@ -38,7 +38,15 @@ const sevenDays = computed(() => {
       </span>
       <span> 7-day Forecast </span>
     </h1>
-    <table class="table-auto">
+    <table class="table-auto w-full">
+      <thead class="sticky top-0 bg-gradient-to-r from-cyan-500 to-blue-50">
+        <tr class="text-xs">
+          <th class="px-4 py-2">Day</th>
+          <th class="px-4 py-2">Weather</th>
+          <th class="px-4 py-2">Temperature</th>
+          <th class="px-4 py-2 hidden md:table-cell">Sunrise/Sunset</th>
+        </tr>
+      </thead>
       <tbody>
         <forecast-card
           :day="day"
