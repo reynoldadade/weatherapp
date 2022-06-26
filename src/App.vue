@@ -31,6 +31,8 @@ function noLocationFound() {
   historicWeatherData.value = [];
   notFound.value = true;
 }
+
+//now using https
 // request for current weather data
 function getCurrentWeatherData(lat, lon) {
   toggleLoader(true);
