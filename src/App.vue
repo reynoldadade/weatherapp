@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed, defineAsyncComponent } from "vue";
+import { ref, onMounted, computed, defineAsyncComponent, watch } from "vue";
 import axios from "axios";
 import SearchInput from "./components/SearchInput.vue";
 import WeatherCard from "./components/WeatherCard.vue";
@@ -127,6 +127,21 @@ const highAndLowCurrent = computed(() => {
     min: 0,
   };
 });
+
+watch(
+  () => searchCountry.value,
+  (newSearchCountry, oldSearchCountry) => {
+    if (
+      newSearchCountry.city !== oldSearchCountry.city &&
+      currentComponent.value === "HistoryCard"
+    ) {
+      makeHistoricalWeatherDataRequest(
+        newSearchCountry.lat,
+        newSearchCountry.lon
+      );
+    }
+  }
+);
 
 // This starter template is using Vue 3 <script setup> SFCs
 // Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
