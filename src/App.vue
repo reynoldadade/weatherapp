@@ -131,7 +131,10 @@ const highAndLowCurrent = computed(() => {
 watch(
   () => searchCountry.value,
   (newSearchCountry, oldSearchCountry) => {
-    if (newSearchCountry.city !== oldSearchCountry.city) {
+    if (
+      newSearchCountry.city !== oldSearchCountry.city &&
+      currentComponent.value === "HistoryCard"
+    ) {
       makeHistoricalWeatherDataRequest(
         newSearchCountry.lat,
         newSearchCountry.lon
