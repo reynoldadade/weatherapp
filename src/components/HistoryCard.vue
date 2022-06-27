@@ -27,7 +27,7 @@ const weatherIcon = computed(() => {
 </script>
 <template>
   <tr>
-    <td class="font-semibold">
+    <td class="font-semibold" data-testid="historyCard-day">
       {{ moment(props.current.dt * 1000).format("ddd") }}
     </td>
     <td>
@@ -38,7 +38,9 @@ const weatherIcon = computed(() => {
     <td class="">
       <!-- Today's low temperature -->
 
-      <span class="text-sm">{{ props.current.temp }}º</span>
+      <span class="text-sm" data-testid="historyCard-temp"
+        >{{ props.current.temp }}º</span
+      >
       <!-- today's high temperature -->
     </td>
   </tr>
