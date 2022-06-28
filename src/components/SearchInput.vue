@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, ref } from "vue";
-import axios from "axios";
+import { getReverseGeoCode, getGeoCode } from "../services/api.service";
 
 const location = ref({});
 
@@ -10,43 +10,33 @@ const place = ref("");
 const emit = defineEmits(["lngLatFound", "toggleLoader", "noLocationFound"]);
 
 // search for LngLat using city name
-function searchPlace(place) {
-  axios
-    .get(
-      `${
-        import.meta.env.VITE_BASE_URL
-      }/geo/1.0/direct?q=${place}&limit=1&appid=${
-        import.meta.env.VITE_WEATHER_APP_ID
-      }`
-    )
-    .then((response) => {
-      if (response.data.length > 0) {
-        const [first] = response.data;
-        location.value = first;
-        emit("lngLatFound", { ...first, city: first.name });
-      } else {
-        emit("noLocationFound");
-        emit("toggleLoader", false);
-      }
-    });
-}
-// request for location using LngLat
-function searchWithLonLat(lat, lon) {
+async function searchPlace(place) {
+  if (!place) return;
   emit("toggleLoader", true);
-  axios
-    .get(
-      `${
-        import.meta.env.VITE_BASE_URL
-      }/geo/1.0/reverse?lat=${lat}&lon=${lon}&appid=${
-        import.meta.env.VITE_WEATHER_APP_ID
-      }&limit=1`
-    )
-    .then((response) => {
-      const [first] = response.data;
-      place.value = first.name;
-      location.value = first;
-      emit("toggleLoader", false);
-    });
+  const response = await getGeoCode(place);
+
+  if (response.length > 0) {
+    const [first] = response;
+    location.value = first;
+    emit("lngLatFound", { ...first, city: first.name });
+    emit("toggleLoader", false);
+  } else {
+    emit("noLocationFound");
+    emit("toggleLoader", false);
+  }
+}
+
+// request for location using LngLat
+async function searchWithLonLat(lat, lon) {
+  emit("toggleLoader", true);
+  const response = await getReverseGeoCode(lat, lon);
+  if (response) {
+    place.value = response.name;
+    location.value = response;
+    emit("toggleLoader", false);
+  } else {
+    emit("toggleLoader", false);
+  }
 }
 
 // Pre-fill the input field with the user current location
@@ -95,8 +85,14 @@ onMounted(() => {
       class="input w-full shadow-md mx-2"
       placeholder="Enter City"
       @keydown.enter="searchPlace(place)"
+      data-testid="search-input"
     />
-    <button class="btn" @click="searchPlace(place)">
+    <button
+      class="btn"
+      @click="searchPlace(place)"
+      data-testid="searchButton"
+      required
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         class="h-6 w-6"
