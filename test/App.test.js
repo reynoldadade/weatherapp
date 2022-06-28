@@ -1,7 +1,7 @@
 /** @vitest-environment happy-dom */
 import App from "../src/App.vue";
 
-import { beforeEach, describe, it, vi, expect } from "vitest";
+import { beforeEach, describe, it, vi, expect, afterAll } from "vitest";
 import oneCallResponse from "./mocks/oneCall";
 import timemachine from "./mocks/timeMachine";
 import directLocation from "./mocks/direct";
@@ -33,6 +33,12 @@ describe("App", () => {
         },
       },
     });
+  });
+
+  afterAll(() => {
+    //remove mocks
+
+    vi.clearAllMocks();
   });
 
   it("should display weather data when a request is made", async () => {
