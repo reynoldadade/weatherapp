@@ -188,7 +188,11 @@ watch(
       </Transition>
       <MapContainer :searchCountry="searchCountry" />
       <div class="w-full">
-        <button class="btn" @click="changeComponent">
+        <button
+          class="btn"
+          @click="changeComponent"
+          data-testid="changeComponentButton"
+        >
           {{
             currentComponent === "WeekForecast"
               ? "View Last 5 days"

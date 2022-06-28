@@ -49,4 +49,22 @@ describe("App", () => {
     //check to see if noSearchOnError is not in dom
     expect(wrapper.find("[data-testid=noSearchOrError']").exists()).toBe(false);
   });
+
+  it("Should show or hide component on click of showMore Button", async () => {
+    expect(wrapper.find("[data-testid='searchResults']").exists()).toBe(false);
+    expect(wrapper.find("[data-testid='noSearchOrError']").exists()).toBe(true);
+    const searchInput = wrapper.find("[data-testid='search-input']");
+    await searchInput.setValue("Accra");
+    const searchButton = wrapper.find("[data-testid='searchButton']");
+    await searchButton.trigger("click");
+    await flushPromises();
+    // test that showMoreComponent does not exist
+    const showMoreButton = wrapper.find("[data-testid='showMoreButton']");
+
+    await showMoreButton.trigger("click");
+    //component should show After click of showMoreButton
+    expect(wrapper.find("[data-testid='showMoreComponent']").exists()).toBe(
+      true
+    );
+  });
 });
