@@ -31,8 +31,9 @@ async function searchWithLonLat(lat, lon) {
   emit("toggleLoader", true);
   const response = await getReverseGeoCode(lat, lon);
   if (response) {
-    place.value = response.name;
-    location.value = response;
+    const [first] = response;
+    place.value = first.name;
+    location.value = first;
     emit("toggleLoader", false);
   } else {
     emit("toggleLoader", false);

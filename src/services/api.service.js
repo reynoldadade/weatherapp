@@ -24,6 +24,7 @@ export async function makeHistoricalWeatherDataRequest(lat, lon) {
     const responses = await Promise.all(
       createHistoricalWeatherDataRequest(lat, lon)
     );
+    // console.log(responses.map((response) => response.data));
     return responses.map((response) => response.data);
   } catch ({ error }) {
     console.log(error);
@@ -54,8 +55,7 @@ export async function getReverseGeoCode(lat, lon) {
         import.meta.env.VITE_WEATHER_APP_ID
       }&limit=1`
     );
-    const [first] = response.data;
-    return first;
+    return response.data;
   } catch ({ error }) {
     return null;
   }

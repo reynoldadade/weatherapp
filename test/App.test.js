@@ -1,18 +1,52 @@
 /** @vitest-environment happy-dom */
 import App from "../src/App.vue";
-import { render, fireEvent } from "@testing-library/vue";
-import { describe, it, vi } from "vitest";
+
+import { beforeEach, describe, it, vi, expect } from "vitest";
 import oneCallResponse from "./mocks/oneCall";
 import timemachine from "./mocks/timeMachine";
 import directLocation from "./mocks/direct";
+import reverseLocation from "./mocks/reverse";
+import Vue from "vue";
+
+import {
+  getCurrentWeatherData,
+  getGeoCode,
+  getReverseGeoCode,
+  makeHistoricalWeatherDataRequest,
+} from "../src/services/api.service";
+import { mount, flushPromises } from "@vue/test-utils";
+
+vi.mock("../src/services/api.service");
 
 describe("App", () => {
-  it("should display weather data", async () => {
-    const { getByTestId } = render(App);
+  let wrapper;
+  beforeEach(() => {
+    getCurrentWeatherData.mockResolvedValue(oneCallResponse);
+    getGeoCode.mockResolvedValue(directLocation);
+    getReverseGeoCode.mockResolvedValue(reverseLocation);
+    makeHistoricalWeatherDataRequest.mockResolvedValue(timemachine);
 
-    const searchInput = getByTestId("search-input");
-    await fireEvent.update(searchInput, "Accra");
-    const searchButton = getByTestId("searchButton");
-    await fireEvent.click(searchButton);
+    wrapper = mount(App, {
+      global: {
+        stubs: {
+          MapContainer: true,
+        },
+      },
+    });
+  });
+
+  it("should display weather data when a request is made", async () => {
+    // test to see if results is not in dom
+    expect(wrapper.find("[data-testid=searchResults']").exists()).toBe(false);
+    expect(wrapper.find("[data-testid=noSearchOrError']").exists()).toBe(true);
+    const searchInput = wrapper.find("[data-testid='search-input']");
+    await searchInput.setValue("Accra");
+    const searchButton = wrapper.find("[data-testid='searchButton']");
+    await searchButton.trigger("click");
+    await flushPromises();
+    //check to see if results is in dom
+    expect(wrapper.find("[data-testid=searchResults']").exists()).toBe(true);
+    //check to see if noSearchOnError is not in dom
+    expect(wrapper.find("[data-testid=noSearchOrError']").exists()).toBe(false);
   });
 });

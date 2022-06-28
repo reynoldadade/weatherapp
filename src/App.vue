@@ -164,10 +164,6 @@ watch(
 </script>
 
 <template>
-  <!-- TODO: create component for current days weather data -->
-  <!-- TODO: create component for the next 7 days and previous days -->
-  <!-- TODO: create component for extra info -->
-  <!-- TODO: add map option to allow for plotting of location on map -->
   <div class="p-2 md:p-40 relative">
     <Loader v-if="showLoader" />
     <SearchInput
@@ -176,7 +172,11 @@ watch(
       @noLocationFound="noLocationFound"
     />
 
-    <div v-if="Object.keys(currentWeatherData).length > 0" class="w-full">
+    <div
+      v-if="Object.keys(currentWeatherData).length > 0"
+      class="w-full"
+      data-testid="searchResults"
+    >
       <WeatherCard
         :current="currentWeatherData.current"
         :highAndLowCurrent="highAndLowCurrent"
@@ -212,7 +212,11 @@ watch(
         </div>
       </div>
     </div>
-    <div class="flex justify-center w-full my-40" v-else>
+    <div
+      class="flex justify-center w-full my-40"
+      v-else
+      data-testid="noSearchOrError"
+    >
       <div
         class="card w-3/4 md:w-1/2 shadow-xl bg-gray-100 opacity-70 text-sm p-4"
       >
