@@ -13,7 +13,7 @@ onMounted(() => {
 });
 </script>
 <template>
-  <div class="w-full">
+  <div class="w-full" data-testid="HistoryComponent">
     <h1 class="flex items-center w-full">
       <span class="mx-1"
         ><svg

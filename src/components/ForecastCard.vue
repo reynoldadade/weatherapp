@@ -27,8 +27,8 @@ const weatherIcon = computed(() => {
 </script>
 
 <template>
-  <tr>
-    <td class="font-semibold">
+  <tr data-testid="forecastRow">
+    <td class="font-semibold" data-testid="forecastCard-day">
       {{ moment(props.current.dt * 1000).format("ddd") }}
     </td>
     <td>
@@ -39,18 +39,22 @@ const weatherIcon = computed(() => {
     <td class="">
       <!-- Today's low temperature -->
       <span class="text-xs mx-1">L:</span>
-      <span class="text-sm">{{ props.current.temp.min }}º</span>
+      <span class="text-sm" data-testid="forecastCard-min-temp"
+        >{{ props.current.temp.min }}º</span
+      >
       <!-- today's high temperature -->
       <span class="text-xs mx-1">H:</span>
-      <span class="text-sm">{{ props.current.temp.max }}º</span>
+      <span class="text-sm" data-testid="forecastCard-max-temp"
+        >{{ props.current.temp.max }}º</span
+      >
     </td>
     <td class="hidden md:table-cell">
-      <span class="text-sm">{{
+      <span class="text-sm" data-testid="forecastCard-sunrise">{{
         moment(props.current.sunrise * 1000).format("LT")
       }}</span>
 
       /
-      <span class="text-sm">{{
+      <span class="text-sm" data-testid="forecastCard-sunset">{{
         moment(props.current.sunset * 1000).format("LT")
       }}</span>
     </td>

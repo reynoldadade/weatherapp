@@ -71,7 +71,11 @@ const weatherIcon = computed(() => {
         <span class="text-sm">{{ highAndLowCurrent.max }}º</span>
       </div>
       <div class="card-actions">
-        <button class="btn text-xs" @click="showMore">
+        <button
+          class="btn text-xs"
+          @click="showMore"
+          data-testid="showMoreButton"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="h-6 w-6"

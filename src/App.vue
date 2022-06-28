@@ -1,10 +1,14 @@
 <script setup>
-import { ref, onMounted, computed, defineAsyncComponent, watch } from "vue";
+import { ref, computed, defineAsyncComponent, watch } from "vue";
 import axios from "axios";
 import SearchInput from "./components/SearchInput.vue";
 import WeatherCard from "./components/WeatherCard.vue";
 import ShowMore from "./components/ShowMore.vue";
 import countries from "./services/countries";
+import {
+  makeHistoricalWeatherDataRequest,
+  getCurrentWeatherData,
+} from "./services/api.service";
 import MapContainer from "./components/MapContainer.vue";
 import Loader from "./components/Loader.vue";
 
@@ -34,49 +38,63 @@ function noLocationFound() {
 
 //now using https
 // request for current weather data
-function getCurrentWeatherData(lat, lon) {
+// async function getCurrentWeatherData(lat, lon) {
+//   try {
+//     const response = await axios.get(
+//       `${
+//         import.meta.env.VITE_BASE_URL
+//       }/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=${
+//         import.meta.env.VITE_WEATHER_APP_ID
+//       }&units=metric`
+//     );
+//     return response.data;
+//   } catch ({ error }) {
+//     console.log(error);
+//   }
+// }
+
+async function setCurrentWeatherData(lat, lon) {
   toggleLoader(true);
-  return axios
-    .get(
-      `${
-        import.meta.env.VITE_BASE_URL
-      }/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=${
-        import.meta.env.VITE_WEATHER_APP_ID
-      }&units=metric`
-    )
-    .then((response) => {
-      currentWeatherData.value = response.data;
-      toggleLoader(false);
-    });
+  const response = await getCurrentWeatherData(lat, lon);
+  currentWeatherData.value = response;
+  toggleLoader(false);
 }
 
 // create historical data requests
-function createHistoricalWeatherDataRequest(lat, lon) {
-  const timeStampRequests = [];
-  // last 5 days as timestamps
-  for (let i = 5; i > 0; i--) {
-    const today = Date.now();
-    const days = Math.floor((today - 24 * 60 * 60 * 1000 * i) / 1000);
-    const request = axios.get(
-      `${
-        import.meta.env.VITE_BASE_URL
-      }/data/2.5/onecall/timemachine?lat=${lat}&lon=${lon}&appid=${
-        import.meta.env.VITE_WEATHER_APP_ID
-      }&units=metric&exclude=hourly&dt=${days}&only_current=true`
-    );
-    timeStampRequests.push(request);
-  }
+// function createHistoricalWeatherDataRequest(lat, lon) {
+//   const timeStampRequests = [];
+//   // last 5 days as timestamps
+//   for (let i = 5; i > 0; i--) {
+//     const today = Date.now();
+//     const days = Math.floor((today - 24 * 60 * 60 * 1000 * i) / 1000);
+//     const request = axios.get(
+//       `${
+//         import.meta.env.VITE_BASE_URL
+//       }/data/2.5/onecall/timemachine?lat=${lat}&lon=${lon}&appid=${
+//         import.meta.env.VITE_WEATHER_APP_ID
+//       }&units=metric&exclude=hourly&dt=${days}&only_current=true`
+//     );
+//     timeStampRequests.push(request);
+//   }
 
-  return timeStampRequests;
-}
+//   return timeStampRequests;
+// }
 
 // request hostorical weather data together
-function makeHistoricalWeatherDataRequest(lat, lon) {
-  Promise.all(createHistoricalWeatherDataRequest(lat, lon)).then(
-    (responses) => {
-      historicWeatherData.value = responses.map((response) => response.data);
-    }
-  );
+// async function makeHistoricalWeatherDataRequest(lat, lon) {
+//   try {
+//     const responses = await Promise.all(
+//       createHistoricalWeatherDataRequest(lat, lon)
+//     );
+//     return responses.map((response) => response.data);
+//   } catch ({ error }) {
+//     console.log(error);
+//   }
+// }
+
+async function setHistoricalWeatherData(lat, lon) {
+  const response = await makeHistoricalWeatherDataRequest(lat, lon);
+  historicWeatherData.value = response;
 }
 
 //show the extra component
@@ -86,7 +104,7 @@ function showMore(event) {
 
 function useLngLat(event) {
   const { lon, lat, country, city } = event;
-  getCurrentWeatherData(lat, lon);
+  setCurrentWeatherData(lat, lon);
   const result = countries.find((item) => item.code === country).name;
   searchCountry.value = { country: result, city, lat, lon };
 }
@@ -135,10 +153,7 @@ watch(
       newSearchCountry.city !== oldSearchCountry.city &&
       currentComponent.value === "HistoryCard"
     ) {
-      makeHistoricalWeatherDataRequest(
-        newSearchCountry.lat,
-        newSearchCountry.lon
-      );
+      setHistoricalWeatherData(newSearchCountry.lat, newSearchCountry.lon);
     }
   }
 );
@@ -149,10 +164,6 @@ watch(
 </script>
 
 <template>
-  <!-- TODO: create component for current days weather data -->
-  <!-- TODO: create component for the next 7 days and previous days -->
-  <!-- TODO: create component for extra info -->
-  <!-- TODO: add map option to allow for plotting of location on map -->
   <div class="p-2 md:p-40 relative">
     <Loader v-if="showLoader" />
     <SearchInput
@@ -161,7 +172,11 @@ watch(
       @noLocationFound="noLocationFound"
     />
 
-    <div v-if="Object.keys(currentWeatherData).length > 0" class="w-full">
+    <div
+      v-if="Object.keys(currentWeatherData).length > 0"
+      class="w-full"
+      data-testid="searchResults"
+    >
       <WeatherCard
         :current="currentWeatherData.current"
         :highAndLowCurrent="highAndLowCurrent"
@@ -173,7 +188,11 @@ watch(
       </Transition>
       <MapContainer :searchCountry="searchCountry" />
       <div class="w-full">
-        <button class="btn" @click="changeComponent">
+        <button
+          class="btn"
+          @click="changeComponent"
+          data-testid="changeComponentButton"
+        >
           {{
             currentComponent === "WeekForecast"
               ? "View Last 5 days"
@@ -189,10 +208,7 @@ watch(
                 :is="historyVsForcecast"
                 v-bind="changePropsToComponents"
                 @callHistoryApi="
-                  makeHistoricalWeatherDataRequest(
-                    searchCountry.lat,
-                    searchCountry.lon
-                  )
+                  setHistoricalWeatherData(searchCountry.lat, searchCountry.lon)
                 "
               ></component>
             </Transition>
@@ -200,7 +216,11 @@ watch(
         </div>
       </div>
     </div>
-    <div class="flex justify-center w-full my-40" v-else>
+    <div
+      class="flex justify-center w-full my-40"
+      v-else
+      data-testid="noSearchOrError"
+    >
       <div
         class="card w-3/4 md:w-1/2 shadow-xl bg-gray-100 opacity-70 text-sm p-4"
       >
